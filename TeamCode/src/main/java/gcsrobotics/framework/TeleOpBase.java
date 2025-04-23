@@ -19,7 +19,7 @@ public abstract class TeleOpBase extends OpMode {
 
     public ElapsedTime runTimer = new ElapsedTime();
 
-
+    @Override
     public void init(){
         // Map to config. These must match what is in the config. Add maps to extra motors
         fl = hardwareMap.get(DcMotor.class,"fl");
@@ -39,15 +39,16 @@ public abstract class TeleOpBase extends OpMode {
         br.setDirection(DcMotorSimple.Direction.REVERSE);
 
         // Run without encoders for TeleOp
-        fl.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        fr.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        bl.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        br.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        for (DcMotor motor : new DcMotor[]{fl, fr, bl, br}) {
+            motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        }
+
 
         runInit();
         resetRuntime();
     }
 
+    @Override
     public void loop(){
         runLoop();
     }
@@ -88,9 +89,7 @@ public abstract class TeleOpBase extends OpMode {
     /// Sets the given motor to go to a certain position, at full speed.
     /// If you want to vary the speed, add another parameter with the speed you want
     public void setMotorPosition(DcMotor motor, int targetPosition){
-        motor.setTargetPosition(targetPosition);
-        motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        motor.setPower(1);
+        setMotorPosition(motor,targetPosition,1);
     }
     /// Sets the given motor to go to a certain position at a given speed
     public void setMotorPosition(DcMotor motor, int targetPosition,double speed){
@@ -100,7 +99,7 @@ public abstract class TeleOpBase extends OpMode {
     }
 
     /// Resets the runTimer of the opMode
-    public void resetRuntime(){
+    public void resetRunTimer(){
         runTimer.reset();
     }
 
@@ -108,9 +107,6 @@ public abstract class TeleOpBase extends OpMode {
     public double getRunTime(){
         return runTimer.milliseconds();
     }
-
-
-
 
 
 }

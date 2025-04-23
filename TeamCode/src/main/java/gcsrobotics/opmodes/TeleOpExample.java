@@ -8,18 +8,25 @@ import gcsrobotics.framework.TeleOpBase;
 @TeleOp(name="Example TeleOp")
 @Disabled
 public class TeleOpExample extends TeleOpBase {
+    @Override
     public void runInit(){
         claw.setPosition(0);
     }
 
+    @Override
     public void runLoop(){
 
+
+        // Implements all drive logic necessary
         implementDriveLogic();
 
+        //Example usage of the setMotorPosition() Method
         if(gamepad2.b){
             setMotorPosition(fl,100);
         }
 
+
+        //Speed control
         if(gamepad1.a){
             setSpeed(0.3);
         }
