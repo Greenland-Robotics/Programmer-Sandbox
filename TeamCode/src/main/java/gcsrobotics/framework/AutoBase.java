@@ -1,9 +1,8 @@
 package gcsrobotics.framework;
 
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.Servo;
+import static gcsrobotics.framework.Constants.KdDrive;
+import static gcsrobotics.framework.Constants.KpDrive;
+
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
@@ -11,61 +10,23 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 @SuppressWarnings("unused")
-public abstract class AutoBase extends LinearOpMode {
-
-    /// All motors
-    public DcMotor fl, fr, bl, br;
-    /// All servos
-    public Servo claw;
-
-    /// The GoBilda Pinpoint Odometry Computer
-    private GoBildaPinpointDriver odo;
-
-    /// The PID coefficients
-    private final double KpDrive = 0.00377;
-    private final double KdDrive = 0.0007;
-    private final double KpTurn = 0.1;
-    private final double KdTurn = 0.00;
+public abstract class AutoBase extends FrameBase {
 
 
     /// Optional method to define when you want to run code in init
     public void initSequence(){}
 
     /// The code that runs during start
-    public abstract void run();
+    public abstract void runSequence();
 
-
-    public void runOpMode() {
-
-        // Map the actuators to config
-        fl = hardwareMap.get(DcMotor.class, "fl");
-        fr = hardwareMap.get(DcMotor.class, "fr");
-        bl = hardwareMap.get(DcMotor.class, "bl");
-        br = hardwareMap.get(DcMotor.class, "br");
-        claw = hardwareMap.get(Servo.class, "claw");
-        odo = hardwareMap.get(GoBildaPinpointDriver.class, "odo");
-        odo.resetPosAndIMU();
-
-
-        // Set motor directions, change the ones that need to be reversed
-        fl.setDirection(DcMotorSimple.Direction.FORWARD);
-        fr.setDirection(DcMotorSimple.Direction.REVERSE);
-        bl.setDirection(DcMotorSimple.Direction.FORWARD);
-        br.setDirection(DcMotorSimple.Direction.REVERSE);
-
-        // Set all motor modes to RUN_WITHOUT_ENCODER
-        for (DcMotor motor : new DcMotor[]{fl, fr, bl, br}) {
-            motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        }
-
-        //Run your init code
+    @Override
+    public void runInit(){
         initSequence();
+    }
 
-        //Wait for start button to be pressed
-        waitForStart();
-
-        // Run your main logic
-        run();
+    @Override
+    public void run() {
+        runSequence();
     }
 
 
@@ -88,7 +49,7 @@ public abstract class AutoBase extends LinearOpMode {
 
     /// Set all motor powers to a certain power
     public void setPowers(double power) {
-        for (DcMotor motor : new DcMotor[]{fl, fr, bl, br}) {
+        for (EzDcMotor motor : new EzDcMotor[]{fl, fr, bl, br}) {
             motor.setPower(power);
         }
     }
@@ -183,16 +144,33 @@ public abstract class AutoBase extends LinearOpMode {
     ///  Calculates drive power for the pathing methods
     private double pidDrivePower(double error, boolean isX) {
         double kp = isX ? KpDrive : KpDrive + 0.006;
-        return Range.clip(kp * error + KdDrive * error, -1, 1);
+        return kp * error + KdDrive * error;
     }
+
 
     /// Sets the motor powers according to the calculated powers for pathing methods
     private void setMotorPowers(double xPower, double yPower, double headingCorrection) {
-        fl.setPower(xPower - yPower + headingCorrection);
-        fr.setPower(xPower + yPower - headingCorrection);
-        bl.setPower(xPower + yPower + headingCorrection);
-        br.setPower(xPower - yPower - headingCorrection);
+        double flPower = xPower - yPower + headingCorrection;
+        double frPower = xPower + yPower - headingCorrection;
+        double blPower = xPower + yPower + headingCorrection;
+        double brPower = xPower - yPower - headingCorrection;
+
+        // Find the largest magnitude
+        double max = Math.max(
+                1.0,
+                Math.max(
+                        Math.max(Math.abs(flPower), Math.abs(frPower)),
+                        Math.max(Math.abs(blPower), Math.abs(brPower))
+                )
+        );
+
+        // Scale all powers if needed
+        fl.setPower(flPower / max);
+        fr.setPower(frPower / max);
+        bl.setPower(blPower / max);
+        br.setPower(brPower / max);
     }
+
 
 
     /// Sends any telemetry
@@ -245,20 +223,6 @@ public abstract class AutoBase extends LinearOpMode {
     private double getHeading() {
         odo.update();
         return odo.getPosition().getHeading(AngleUnit.DEGREES);
-    }
-
-    /// Sets the given motor to go to a certain position, at full speed.
-    /// If you want to vary the speed, add another parameter with the speed you want
-    public void setMotorPosition(DcMotor motor, int targetPosition){
-        motor.setTargetPosition(targetPosition);
-        motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        motor.setPower(1);
-    }
-    /// Sets the given motor to go to a certain position at a given speed
-    public void setMotorPosition(DcMotor motor, int targetPosition,double speed){
-        motor.setTargetPosition(targetPosition);
-        motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        motor.setPower(speed);
     }
 
 

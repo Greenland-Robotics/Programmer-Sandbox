@@ -9,7 +9,7 @@ import gcsrobotics.framework.TeleOpBase;
 @Disabled
 public class TeleOpExample extends TeleOpBase {
     @Override
-    public void runInit(){
+    public void inInit(){
         claw.setPosition(0);
     }
 
@@ -22,23 +22,20 @@ public class TeleOpExample extends TeleOpBase {
 
         //Example usage of the setMotorPosition() Method
         if(gamepad2.b){
-            setMotorPosition(fl,100);
+            arm.setPosition(100);
         }
 
 
         //Speed control
         if(gamepad1.a){
             setSpeed(0.3);
-        }
-        else if(gamepad1.b){
+        } else if(gamepad1.b){
             setSpeed(0.5);
-        }if(gamepad1.x){
+        } else if(gamepad1.x){
             setSpeed(0.7);
-        }
-        else if(gamepad1.y){
+        } else if(gamepad1.y){
             setSpeed(1);
         }
-
 
     }
 }

@@ -15,10 +15,9 @@ public class AutoExample extends AutoBase {
     }
 
     @Override
-    public void run() {
+    public void runSequence() {
 
         // Example usage of setMotorPosition
-        setMotorPosition(fl, 2000);
         //Example usage of the wait(int milliseconds) method
         wait(1000);
 
