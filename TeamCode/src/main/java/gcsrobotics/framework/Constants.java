@@ -8,6 +8,11 @@ public class Constants {
     public static double KdDrive;
     public static double KpTurn;
     public static double KdTurn;
+    public static int armUp;
+    public static int armMiddle;
+    public static int armDown;
+    public static double wristUp;
+    public static double wristDown;
 
     static{
 
@@ -28,12 +33,12 @@ public class Constants {
 
 
         //More examples here
-//        final double armUp = 500;
-//        final double armDown = 0;
-//        final double armMiddle = 250;
-//
-//        final double wristUp = 0.8;
-//        final double wristDown = 0;
+        armUp = 500;
+        armDown = 0;
+        armMiddle = 250;
+
+        wristUp = 0.8;
+        wristDown = 0;
 
     }
 
