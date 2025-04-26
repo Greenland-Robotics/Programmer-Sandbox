@@ -9,6 +9,8 @@ import com.qualcomm.robotcore.util.Range;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
+import java.util.function.Supplier;
+
 @SuppressWarnings("unused")
 public abstract class AutoBase extends FrameBase {
 
@@ -49,7 +51,7 @@ public abstract class AutoBase extends FrameBase {
 
     /// Set all motor powers to a certain power
     public void setPowers(double power) {
-        for (EzDcMotor motor : new EzDcMotor[]{fl, fr, bl, br}) {
+        for (DcMotorEnhanced motor : new DcMotorEnhanced[]{fl, fr, bl, br}) {
             motor.setPower(power);
         }
     }
@@ -223,6 +225,12 @@ public abstract class AutoBase extends FrameBase {
     private double getHeading() {
         odo.update();
         return odo.getPosition().getHeading(AngleUnit.DEGREES);
+    }
+
+    public void waitUntil(Supplier<Boolean> condition) {
+        while (!condition.get()) {
+            idle();
+        }
     }
 
 
