@@ -701,6 +701,23 @@ public class GoBildaPinpointDriver extends I2cDeviceSynchDevice<I2cDeviceSynchSi
                 ((hOrientation + Math.PI) % (2 * Math.PI) + 2 * Math.PI) % (2 * Math.PI) - Math.PI);
     }
 
+    public double getX(){
+        this.update();
+        return getPosition().getX(DistanceUnit.INCH);
+    }
+    public double getY(){
+        this.update();
+        return getPosition().getY(DistanceUnit.INCH);
+    }
+    public double getAngle(){
+        this.update();
+        return getPosition().getHeading(AngleUnit.DEGREES);
+    }
+
+    public GoBildaPinpointDriver getPinpoint(){
+        return this;
+    }
+
     /**
      * @deprecated This function is not recommended, as velocity is wrapped from -180° to 180°.
      * instead use individual getters.
