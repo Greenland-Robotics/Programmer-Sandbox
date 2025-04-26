@@ -5,13 +5,23 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 @SuppressWarnings("unused")
-public class EzDcMotor {
+public class DcMotorEnhanced {
     private final DcMotorEx motor;
     private double DEFAULT_SPEED = 1;
 
-    public EzDcMotor(DcMotor motor) {
+    public DcMotorEnhanced(DcMotor motor) {
         // Try to cast to DcMotorEx for bonus features
         this.motor = (DcMotorEx) motor;
+    }
+
+    public void setPosAndWait(int targetPosition){
+        setPosAndWait(targetPosition,DEFAULT_SPEED);
+    }
+    public void setPosAndWait(int targetPosition, double speed){
+        setPosition(targetPosition,speed);
+        while(getCurrentPosition() != targetPosition){
+            Thread.yield();
+        }
     }
 
     /// Sets the given motor to go to a certain position, at full speed.
