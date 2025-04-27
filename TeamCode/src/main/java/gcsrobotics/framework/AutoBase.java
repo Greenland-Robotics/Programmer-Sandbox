@@ -12,7 +12,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import java.util.function.Supplier;
 
 @SuppressWarnings("unused")
-public abstract class AutoBase extends FrameBase {
+public abstract class AutoBase extends OpModeBase {
 
 
     /// Optional method to define when you want to run code in init

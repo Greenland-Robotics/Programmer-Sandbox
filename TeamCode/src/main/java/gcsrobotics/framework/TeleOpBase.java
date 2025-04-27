@@ -4,7 +4,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 
 @SuppressWarnings("unused")
-public abstract class TeleOpBase extends FrameBase {
+public abstract class TeleOpBase extends OpModeBase {
 
     //Declare motors here. Add any actuator motors you need
     public DcMotor fl,fr,bl,br;//,arm,slide,etc.

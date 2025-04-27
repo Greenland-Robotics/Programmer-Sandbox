@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 
 
-public abstract class FrameBase extends LinearOpMode {
+public abstract class OpModeBase extends LinearOpMode {
     public DcMotorEnhanced fl,fr,bl,br,arm;
     public Servo claw;
     public GoBildaPinpointDriver odo;
