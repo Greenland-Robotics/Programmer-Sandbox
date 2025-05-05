@@ -10,6 +10,112 @@ To use this Android Studio project, you will need Android Studio Ladybug (2024.2
 
 To program your robot in Blocks or OnBot Java, you do not need Android Studio.
 
+# Greenland Robotics Framework Documentation
+
+This documentation explains the main methods in our robot framework. It's designed to be easy for new programmers to understand.
+
+## Main Methods and How to Use Them
+
+### 1. Basic Movement Methods
+
+```java
+// Drive in a specific direction
+simpleDrive(direction, power, time);
+// Example: Drive forward at 50% power for 1 second
+simpleDrive("vertical", 0.5, 1000);
+
+// Set all motors to the same power
+setPowers(power);
+// Example: Set all motors to 50% power
+setPowers(0.5);
+
+// Wait for a specific time
+wait(milliseconds);
+// Example: Wait for 2 seconds
+wait(2000);
+```
+
+### 2. Autonomous Movement
+
+```java
+// Move to specific coordinates
+path(targetX, targetY);
+// Example: Move to position (100, 100)
+path(100, 100);
+
+// Move to coordinates with forgiveness for one axis
+path(targetX, targetY, 'x' or 'y');
+// Example: Move to position (100, 100) but ignore X axis errors
+path(100, 100, 'x');
+```
+
+### 3. Motor Control
+
+```java
+// Set motor power
+setPower(power);
+// Example: Set motor to 75% power
+setPower(0.75);
+
+// Set motor position
+setPosition(targetPosition);
+// Example: Move motor to position 100
+setPosition(100);
+```
+
+### 4. Linear Slide
+
+```java
+// Set slide target position
+setTargetPosition(position);
+// Example: Move slide to position 50
+setTargetPosition(50);
+
+// Set slide power
+setPower(power);
+// Example: Move slide at 50% power
+setPower(0.5);
+```
+
+### 5. Odometry (Position Tracking)
+
+```java
+// Reset position and IMU
+resetPosAndIMU();
+
+// Update odometry data
+update();
+```
+
+### Example Autonomous Program
+
+```java
+public class MyAutoOpMode extends AutoBase {
+    @Override
+    public void runSequence() {
+        // Reset position tracking
+        odo.resetPosAndIMU();
+        
+        // Move to position (100, 100)
+        path(100, 100);
+        
+        // Wait for 1 second
+        wait(1000);
+        
+        // Move slide to position 50
+        slide.setTargetPosition(50);
+    }
+}
+```
+
+### Important Tips
+
+1. Always reset position tracking at the start of autonomous
+2. Use `wait()` for precise timing
+3. Check motor power levels (keep between -1 and 1)
+4. Use `path()` for accurate movements
+5. Update odometry regularly with `update()`
+
 ## Getting Started
 If you are new to robotics or new to the *FIRST* Tech Challenge, then you should consider reviewing the [FTC Blocks Tutorial](https://ftc-docs.firstinspires.org/programming_resources/blocks/Blocks-Tutorial.html) to get familiar with how to use the control system:
 
