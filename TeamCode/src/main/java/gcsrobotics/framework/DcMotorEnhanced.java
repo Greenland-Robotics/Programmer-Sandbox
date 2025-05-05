@@ -14,13 +14,13 @@ public class DcMotorEnhanced {
         this.motor = (DcMotorEx) motor;
     }
 
-    public void setPosAndWait(int targetPosition){
-        setPosAndWait(targetPosition,DEFAULT_SPEED);
+    public void setPosAndWait(int targetPosition, OpModeBase opmode){
+        setPosAndWait(targetPosition,DEFAULT_SPEED,opmode);
     }
-    public void setPosAndWait(int targetPosition, double speed){
+    public void setPosAndWait(int targetPosition, double speed,OpModeBase opmode){
         setPosition(targetPosition,speed);
         while(getCurrentPosition() != targetPosition){
-            Thread.yield();
+            opmode.idle();
         }
     }
 
