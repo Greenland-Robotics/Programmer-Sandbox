@@ -19,7 +19,7 @@ public class AutoExample extends AutoBase {
     public void runSequence() {
 
         // Example usage of setPosAndWait()
-        arm.setPosAndWait(armUp);
+        arm.setPosAndWait(armUp,this);
 
         // Example usage of the prebuilt path and chain methods
         // Specify any coordinate, and it will go there.
@@ -38,7 +38,7 @@ public class AutoExample extends AutoBase {
 
 
         chain(100,200);
-        arm.setPosAndWait(armUp,0.9);
+        arm.setPosAndWait(armUp,0.9,this);
     }
 
 }
