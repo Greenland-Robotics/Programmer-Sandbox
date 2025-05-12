@@ -14,6 +14,8 @@ public class Constants {
     public static double wristUp;
     public static double wristDown;
 
+    public static double autoMaxPower;
+
     static{
 
 
@@ -39,6 +41,8 @@ public class Constants {
 
         wristUp = 0.8;
         wristDown = 0;
+
+        autoMaxPower = 0.6;
 
     }
 

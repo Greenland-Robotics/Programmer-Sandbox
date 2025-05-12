@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.Auto;
+package gcsrobotics.examples;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;

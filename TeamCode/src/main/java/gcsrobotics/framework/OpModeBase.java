@@ -38,7 +38,6 @@ public abstract class OpModeBase extends LinearOpMode {
         runInit();
         waitForStart();
         run();
-        fl.setPosition(100);
 
     }
 }

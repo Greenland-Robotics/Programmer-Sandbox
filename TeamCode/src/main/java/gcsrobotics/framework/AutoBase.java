@@ -2,12 +2,10 @@ package gcsrobotics.framework;
 
 import static gcsrobotics.framework.Constants.KdDrive;
 import static gcsrobotics.framework.Constants.KpDrive;
+import static gcsrobotics.framework.Constants.autoMaxPower;
 
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
-
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 import java.util.function.Supplier;
 
@@ -103,7 +101,7 @@ public abstract class AutoBase extends OpModeBase {
 
             double xPower = pidDrivePower(xError, true);
             double yPower = pidDrivePower(yError, false);
-            double headingCorrection = Range.clip(0.03 * getHeading(), -0.3, 0.3);
+            double headingCorrection = Range.clip(0.03 * getAngle(), -0.3, 0.3);
 
             setMotorPowers(xPower, yPower, headingCorrection);
             sendTelemetry("PATH", xError, yError, xPower, yPower, headingCorrection);
@@ -135,7 +133,7 @@ public abstract class AutoBase extends OpModeBase {
 
             double xPower = pidDrivePower(xError, true);
             double yPower = pidDrivePower(yError, false);
-            double headingCorrection = Range.clip(0.03 * getHeading(), -0.3, 0.3);
+            double headingCorrection = Range.clip(0.03 * getAngle(), -0.3, 0.3);
 
             setMotorPowers(xPower, yPower, headingCorrection);
             sendTelemetry("CHAIN", xError, yError, xPower, yPower, headingCorrection);
@@ -159,7 +157,7 @@ public abstract class AutoBase extends OpModeBase {
 
         // Find the largest magnitude
         double max = Math.max(
-                1.0,
+                autoMaxPower,
                 Math.max(
                         Math.max(Math.abs(flPower), Math.abs(frPower)),
                         Math.max(Math.abs(blPower), Math.abs(brPower))
@@ -180,7 +178,7 @@ public abstract class AutoBase extends OpModeBase {
         telemetry.addLine("Following a " + label);
         telemetry.addData("X Coord", getX());
         telemetry.addData("Y Coord", getY());
-        telemetry.addData("Heading", getHeading());
+        telemetry.addData("Heading", getAngle());
         telemetry.addData("X Error", xErr);
         telemetry.addData("Y Error", yErr);
         telemetry.addData("X Power", xPow);
@@ -209,22 +207,19 @@ public abstract class AutoBase extends OpModeBase {
 
     /// Getter method for the x coordinate
     private double getX() {
-        odo.update();
-        return odo.getPosition().getX(DistanceUnit.INCH);
+        return odo.getX();
     }
 
 
     /// Getter method for the y coordinate
     private double getY() {
-        odo.update();
-        return odo.getPosition().getY(DistanceUnit.INCH);
+        return odo.getX();
     }
 
 
     ///  Getter method for the heading
-    private double getHeading() {
-        odo.update();
-        return odo.getPosition().getHeading(AngleUnit.DEGREES);
+    private double getAngle() {
+        return odo.getAngle();
     }
 
     public void waitUntil(Supplier<Boolean> condition) {

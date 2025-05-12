@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.HardwareClasses;
+package gcsrobotics.examples;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;

@@ -1,4 +1,4 @@
-package gcsrobotics.opmodes;
+package gcsrobotics.examples;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;

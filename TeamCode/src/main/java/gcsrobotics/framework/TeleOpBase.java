@@ -6,11 +6,6 @@ import com.qualcomm.robotcore.hardware.Servo;
 @SuppressWarnings("unused")
 public abstract class TeleOpBase extends OpModeBase {
 
-    //Declare motors here. Add any actuator motors you need
-    public DcMotor fl,fr,bl,br;//,arm,slide,etc.
-
-    //Declare any servos you have
-    public Servo claw;// wrist, rotate, etc.
     private double horizontal;
     private double speed = 0.7;
 
@@ -20,7 +15,7 @@ public abstract class TeleOpBase extends OpModeBase {
     public void runInit(){
 
         // Run without encoders for TeleOp
-        for (DcMotor motor : new DcMotor[]{fl, fr, bl, br}) {
+        for (DcMotorEnhanced motor : new DcMotorEnhanced[]{fl, fr, bl, br}) {
             motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         }
 
