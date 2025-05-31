@@ -1,6 +1,9 @@
 package gcsrobotics.framework;
 
+import com.acmerobotics.dashboard.config.Config;
+
 /// A class that houses all of the constants
+@Config //This Config tag allows for these values to be tuned in real time using the dashboard
 public class Constants {
     public static double clawClose;
     public static double clawOpen;

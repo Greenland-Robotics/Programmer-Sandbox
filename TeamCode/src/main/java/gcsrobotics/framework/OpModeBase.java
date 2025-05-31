@@ -4,12 +4,16 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 
 
 public abstract class OpModeBase extends LinearOpMode {
     protected DcMotorEnhanced fl,fr,bl,br,arm;
     protected Servo claw;
     protected GoBildaPinpointDriver odo;
+
+
 
 
     protected abstract void runInit();
@@ -39,6 +43,9 @@ public abstract class OpModeBase extends LinearOpMode {
 
     @Override
     public void runOpMode(){
+        // Initialize telemetry for dashboard and Driver Hub
+        telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
+
         //Initialize hardware
         initHardware();
 
