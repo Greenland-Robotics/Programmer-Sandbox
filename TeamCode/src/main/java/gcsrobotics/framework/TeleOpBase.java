@@ -1,18 +1,14 @@
 package gcsrobotics.framework;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.Servo;
 
 @SuppressWarnings("unused")
 public abstract class TeleOpBase extends OpModeBase {
 
-    private double horizontal;
     private double speed = 0.7;
 
-
-
     @Override
-    public void runInit(){
+    protected void runInit(){
 
         // Run without encoders for TeleOp
         for (DcMotorEnhanced motor : new DcMotorEnhanced[]{fl, fr, bl, br}) {
@@ -23,25 +19,26 @@ public abstract class TeleOpBase extends OpModeBase {
     }
 
     @Override
-    public void run(){
+    protected void run(){
         while(opModeIsActive()){
             runLoop();
         }
     }
 
     ///Code to be run when you press start
-    public abstract void runLoop();
+    protected abstract void runLoop();
+
     ///Code to be run when you press init
-    public abstract void inInit();
+    protected abstract void inInit();
 
     /// Sets the drive speed of the chassis
-    public void setSpeed(double speed){
+    protected void setSpeed(double speed){
         this.speed = speed;
     }
 
     /// Calling this method implements the entire mecanum drive logic in one line, use this unless you need a different
     /// system for driving
-    public void implementDriveLogic(){
+    protected void implementDriveLogic(){
 
         double horizontal;
         //Horizontal Lock

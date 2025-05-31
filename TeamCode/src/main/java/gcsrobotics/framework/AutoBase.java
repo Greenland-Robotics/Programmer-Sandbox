@@ -4,43 +4,48 @@ import static gcsrobotics.framework.Constants.KdDrive;
 import static gcsrobotics.framework.Constants.KpDrive;
 import static gcsrobotics.framework.Constants.autoMaxPower;
 
+import androidx.annotation.NonNull;
+
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
 import java.util.function.Supplier;
 
-@SuppressWarnings("unused")
+@SuppressWarnings("all")
 public abstract class AutoBase extends OpModeBase {
 
 
     /// Optional method to define when you want to run code in init
-    public void initSequence(){}
+    protected void initSequence(){}
 
     /// The code that runs during start
-    public abstract void runSequence();
+    protected abstract void runSequence();
 
     @Override
-    public void runInit(){
+    protected void runInit(){
         initSequence();
     }
 
     @Override
-    public void run() {
+    protected void run() {
         runSequence();
     }
 
+    private final ElapsedTime stuckTimer = new ElapsedTime();
+    private double lastDistanceToTarget = Double.MAX_VALUE;
+
 
     /// Used for making small, corrective movements when you need simple directional movement
-    public void simpleDrive(String direction, double power, int time){
+    protected void simpleDrive(String direction, double power, int time){
         if(direction.equals("vertical")){
             setPowers(power);
             wait(time);
             stopMotors();
         }else if(direction.equals("horizontal")){
-            fl.setPower(-1);
-            fr.setPower(1);
-            bl.setPower(1);
-            br.setPower(-1);
+            fl.setPower(-power);
+            fr.setPower(power);
+            bl.setPower(power);
+            br.setPower(-power);
             wait(time);
             stopMotors();
         }
@@ -48,14 +53,14 @@ public abstract class AutoBase extends OpModeBase {
 
 
     /// Set all motor powers to a certain power
-    public void setPowers(double power) {
+    protected void setPowers(double power) {
         for (DcMotorEnhanced motor : new DcMotorEnhanced[]{fl, fr, bl, br}) {
             motor.setPower(power);
         }
     }
 
     /// Waits for a set amount of time, similar to sleep, but better for a few reasons
-    public void wait(int milliseconds) {
+    protected void wait(int milliseconds) {
         ElapsedTime timer = new ElapsedTime();
         timer.reset();
         while (opModeIsActive() && timer.milliseconds() < milliseconds) {
@@ -69,20 +74,20 @@ public abstract class AutoBase extends OpModeBase {
 
     /// Accurate movement to any specified coordinate you want.
     /// If you need to be accurate in your positioning, use this method.
-    public void path(int targetX, int targetY) {
+    protected void path(int targetX, int targetY) {
         path(targetX, targetY, ' ');
     }
 
 
     /// Accurate movement to any specified coordinate you want.
     /// If you need to be accurate in your positioning, use this method.
-    /// Also has a forgiveAxis, so if you don't want a particular axis to affect
+    /// This method has a forgiveAxis, so if you don't want a particular axis to affect
     /// end behavior, you can specify it here
-    public void path(int targetX, int targetY, char forgiveAxis) {
+    protected void path(int targetX, int targetY, char forgiveAxis) {
         ElapsedTime endTimer = new ElapsedTime();
         boolean endSession = false;
 
-        while (opModeIsActive() && notStuck()) {
+        while (opModeIsActive() && notStuck(targetX,targetY)) {
             double xError = targetX - getX();
             double yError = targetY - getY();
 
@@ -112,16 +117,16 @@ public abstract class AutoBase extends OpModeBase {
 
     /// Movement to any specified coordinates you want
     /// If you want to be fast, but don't need it to be very accurate, use this.
-    public void chain(int targetX, int targetY) {
+    protected void chain(int targetX, int targetY) {
         chain(targetX, targetY, ' ');
     }
 
     /// Movement to any specified coordinates you want
     /// If you want to be fast, but don't need it to be very accurate, use this.
-    /// Also has a forgiveAxis, so if you don't want a particular axis to affect
+    /// This method has a forgiveAxis, so if you don't want a particular axis to affect
     /// end behavior, you can specify it here
-    public void chain(int targetX, int targetY, char forgiveAxis) {
-        while (opModeIsActive() && notStuck()) {
+    protected void chain(int targetX, int targetY, char forgiveAxis) {
+        while (opModeIsActive() && notStuck(targetX,targetY)) {
             double xError = targetX - getX();
             double yError = targetY - getY();
 
@@ -144,7 +149,7 @@ public abstract class AutoBase extends OpModeBase {
     ///  Calculates drive power for the pathing methods
     private double pidDrivePower(double error, boolean isX) {
         double kp = isX ? KpDrive : KpDrive + 0.006;
-        return kp * error + KdDrive * error;
+        return (kp * error) + (KdDrive * error);
     }
 
 
@@ -194,15 +199,16 @@ public abstract class AutoBase extends OpModeBase {
     }
 
     /// Checks if the robot is not moving
-    private boolean notStuck() {
-        double x = getX(), y = getY();
-        ElapsedTime timer = new ElapsedTime();
-        timer.reset();
-        if(timer.seconds() < 1) {
+    private boolean notStuck(double targetX, double targetY) {
+        double currentDistance = Math.sqrt(Math.pow(targetX - getX(), 2) + Math.pow(targetY - getY(), 2));
+
+        if (Math.abs(currentDistance - lastDistanceToTarget) > 5) {
+            lastDistanceToTarget = currentDistance;
+            stuckTimer.reset();
             return true;
-        }else{
-            return Math.abs(getX() - x) > 10 || Math.abs(getY() - y) > 10;
         }
+
+        return stuckTimer.seconds() < 3.0;
     }
 
     /// Getter method for the x coordinate
@@ -213,7 +219,7 @@ public abstract class AutoBase extends OpModeBase {
 
     /// Getter method for the y coordinate
     private double getY() {
-        return odo.getX();
+        return odo.getY();
     }
 
 
@@ -222,9 +228,9 @@ public abstract class AutoBase extends OpModeBase {
         return odo.getAngle();
     }
 
-    public void waitUntil(Supplier<Boolean> condition) {
+    protected void waitUntil(@NonNull Supplier<Boolean> condition) {
         while (!condition.get()) {
-            idle();
+            sleep(10);
         }
     }
 

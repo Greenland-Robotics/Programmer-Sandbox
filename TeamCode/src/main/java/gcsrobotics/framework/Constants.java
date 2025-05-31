@@ -13,7 +13,7 @@ public class Constants {
     public static int armDown;
     public static double wristUp;
     public static double wristDown;
-
+    public static int ENCODER_TOLERANCE;
     public static double autoMaxPower;
 
     static{
@@ -42,7 +42,11 @@ public class Constants {
         wristUp = 0.8;
         wristDown = 0;
 
+        //This must be between 0 and 1
         autoMaxPower = 0.6;
+
+
+        ENCODER_TOLERANCE = 10;
 
     }
 
