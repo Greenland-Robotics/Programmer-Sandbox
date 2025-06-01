@@ -14,6 +14,12 @@ import java.util.function.Supplier;
 @SuppressWarnings("all")
 public abstract class AutoBase extends OpModeBase {
 
+    protected enum Axis{
+        X,
+        Y,
+        NONE;
+    }
+
 
     /// Optional method to define when you want to run code in init
     protected void initSequence(){}
@@ -36,23 +42,34 @@ public abstract class AutoBase extends OpModeBase {
 
 
     /// Used for making small, corrective movements when you need simple directional movement
-    protected void simpleDrive(String direction, double power, int time){
-        if(direction.equals("vertical")){
-            setPowers(power);
-            wait(time);
-            stopMotors();
-        }else if(direction.equals("horizontal")){
-            fl.setPower(-power);
-            fr.setPower(power);
-            bl.setPower(power);
-            br.setPower(-power);
-            wait(time);
-            stopMotors();
+    /// @param direction the direction you want to move
+    /// @param power the power to set the motors to
+    /// @param time the time to wait in milliseconds
+    protected void simpleDrive(Axis direction, double power, int time){
+        switch(direction){
+            case X:
+                setPowers(power);
+                wait(time);
+                stopMotors();
+                break;
+            case Y:
+                fl.setPower(-power);
+                fr.setPower(power);
+                bl.setPower(power);
+                br.setPower(-power);
+                wait(time);
+                stopMotors();
+                break;
+            default:
+                throw new IllegalArgumentException("Invalid direction for simpleDrive");
         }
+
+
     }
 
 
     /// Set all motor powers to a certain power
+    /// @param power the power to set the motors to
     protected void setPowers(double power) {
         for (DcMotorEnhanced motor : new DcMotorEnhanced[]{fl, fr, bl, br}) {
             motor.setPower(power);
@@ -60,6 +77,7 @@ public abstract class AutoBase extends OpModeBase {
     }
 
     /// Waits for a set amount of time, similar to sleep, but better for a few reasons
+    /// @param milliseconds the amount of time to wait in milliseconds
     protected void wait(int milliseconds) {
         ElapsedTime timer = new ElapsedTime();
         timer.reset();
@@ -72,18 +90,25 @@ public abstract class AutoBase extends OpModeBase {
     }
 
 
+    /// <strong>Precise positioning</strong><br>
     /// Accurate movement to any specified coordinate you want.
     /// If you need to be accurate in your positioning, use this method.
+    /// @param targetX the x coordinate you want to go to
+    /// @param targetY the y coordinate you want to go to
     protected void path(int targetX, int targetY) {
-        path(targetX, targetY, ' ');
+        path(targetX, targetY, Axis.NONE);
     }
 
 
+    /// <strong>Precise positioning</strong><br>
     /// Accurate movement to any specified coordinate you want.
     /// If you need to be accurate in your positioning, use this method.
     /// This method has a forgiveAxis, so if you don't want a particular axis to affect
     /// end behavior, you can specify it here
-    protected void path(int targetX, int targetY, char forgiveAxis) {
+    /// @param targetX the x coordinate you want to go to
+    /// @param targetY the y coordinate you want to go to
+    /// @param forgiveAxis the axis you want to not consider in the end behavior
+    protected void path(int targetX, int targetY, Axis forgiveAxis) {
         ElapsedTime endTimer = new ElapsedTime();
         boolean endSession = false;
 
@@ -92,8 +117,8 @@ public abstract class AutoBase extends OpModeBase {
             double yError = targetY - getY();
 
             boolean atTarget = Math.abs(xError) < 20 && Math.abs(yError) < 20;
-            if (forgiveAxis == 'x' || forgiveAxis == 'X') atTarget = Math.abs(yError) < 20;
-            else if (forgiveAxis == 'y' || forgiveAxis == 'Y') atTarget = Math.abs(xError) < 20;
+            if (forgiveAxis == Axis.X) atTarget = Math.abs(yError) < 20;
+            else if (forgiveAxis == Axis.Y) atTarget = Math.abs(xError) < 20;
 
             if (atTarget && !endSession) {
                 endSession = true;
@@ -115,24 +140,31 @@ public abstract class AutoBase extends OpModeBase {
         stopMotors();
     }
 
+    /// <strong>Fast, but not as accurate</strong><br>
     /// Movement to any specified coordinates you want
     /// If you want to be fast, but don't need it to be very accurate, use this.
+    /// @param targetX the x coordinate you want to go to
+    /// @param targetY the y coordinate you want to go to
     protected void chain(int targetX, int targetY) {
-        chain(targetX, targetY, ' ');
+        chain(targetX, targetY, Axis.NONE);
     }
 
+    /// <strong>Fast, but not as accurate</strong><br>
     /// Movement to any specified coordinates you want
     /// If you want to be fast, but don't need it to be very accurate, use this.
     /// This method has a forgiveAxis, so if you don't want a particular axis to affect
     /// end behavior, you can specify it here
-    protected void chain(int targetX, int targetY, char forgiveAxis) {
+    /// @param targetX the x coordinate you want to go to
+    /// @param targetY the y coordinate you want to go to
+    /// @param forgiveAxis the axis you want to not consider in the end behavior
+    protected void chain(int targetX, int targetY, Axis forgiveAxis) {
         while (opModeIsActive() && notStuck(targetX,targetY)) {
             double xError = targetX - getX();
             double yError = targetY - getY();
 
-            boolean atTarget = Math.abs(xError) < 30 && Math.abs(yError) < 30;
-            if (forgiveAxis == 'x' || forgiveAxis == 'X') atTarget = Math.abs(yError) < 30;
-            else if (forgiveAxis == 'y' || forgiveAxis == 'Y') atTarget = Math.abs(xError) < 30;
+            boolean atTarget = Math.abs(xError) < 40 && Math.abs(yError) < 40;
+            if (forgiveAxis == Axis.X) atTarget = Math.abs(yError) < 40;
+            else if (forgiveAxis == Axis.Y) atTarget = Math.abs(xError) < 40;
 
             if (atTarget) break;
 
@@ -212,19 +244,19 @@ public abstract class AutoBase extends OpModeBase {
     }
 
     /// Getter method for the x coordinate
-    private double getX() {
+    protected double getX() {
         return odo.getX();
     }
 
 
     /// Getter method for the y coordinate
-    private double getY() {
+    protected double getY() {
         return odo.getY();
     }
 
 
     ///  Getter method for the heading
-    private double getAngle() {
+    protected double getAngle() {
         return odo.getAngle();
     }
 

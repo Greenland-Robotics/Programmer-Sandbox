@@ -19,6 +19,7 @@ public class AutoExample extends AutoBase {
     public void runSequence() {
 
         // Example usage of setPosAndWait()
+        // Be sure to include the this parameter after your desired position
         arm.setPosAndWait(armUp,this);
 
         // Example usage of the prebuilt path and chain methods
@@ -34,10 +35,13 @@ public class AutoExample extends AutoBase {
         arm.setPosition(armDown);
         //Example usage of wait until, it looks different from the other methods,
         //but nothing is different. Just include the () -> and then your boolean value
-        waitUntil(() -> arm.getCurrentPosition() != armDown);
+        waitUntil(() -> arm.getCurrentPosition() == armDown);
 
 
         chain(100,200);
+
+        // Move forward for 1 second
+        simpleDrive(Axis.X,0.5,1000);
         arm.setPosAndWait(armUp,0.9,this);
     }
 
