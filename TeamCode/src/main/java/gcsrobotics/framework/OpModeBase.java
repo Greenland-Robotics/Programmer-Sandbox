@@ -1,5 +1,8 @@
 package gcsrobotics.framework;
 
+import static gcsrobotics.framework.Constants.xPodDirection;
+import static gcsrobotics.framework.Constants.yPodDirection;
+
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -12,8 +15,6 @@ public abstract class OpModeBase extends LinearOpMode {
     protected DcMotorEnhanced fl,fr,bl,br,arm;
     protected Servo claw;
     protected GoBildaPinpointDriver odo;
-
-
 
 
     protected abstract void runInit();
@@ -30,6 +31,8 @@ public abstract class OpModeBase extends LinearOpMode {
         claw = hardwareMap.get(Servo.class,"claw");
 
         odo = hardwareMap.get(GoBildaPinpointDriver.class,"odo");
+        odo.setEncoderResolution(GoBildaPinpointDriver.GoBildaOdometryPods.goBILDA_4_BAR_POD);
+        odo.setEncoderDirections(xPodDirection, yPodDirection);
         odo.resetPosAndIMU();
 
         //TODO: Set motor directions. Some motors will be reversed, so you must change that here

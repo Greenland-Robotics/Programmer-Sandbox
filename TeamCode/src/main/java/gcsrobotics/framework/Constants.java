@@ -2,8 +2,8 @@ package gcsrobotics.framework;
 
 import com.acmerobotics.dashboard.config.Config;
 
-/// A class that houses all of the constants
-@Config //This Config tag allows for these values to be tuned in real time using the dashboard
+/// <strong>A class that holds all of the robot constants</strong>
+@Config("Robot Constants") //This Config tag allows for these values to be tuned in real time using the dashboard
 public class Constants {
     public static double clawClose;
     public static double clawOpen;
@@ -18,6 +18,8 @@ public class Constants {
     public static double wristDown;
     public static int ENCODER_TOLERANCE;
     public static double autoMaxPower;
+    public static GoBildaPinpointDriver.EncoderDirection xPodDirection;
+    public static GoBildaPinpointDriver.EncoderDirection yPodDirection;
 
     static{
 
@@ -50,6 +52,12 @@ public class Constants {
 
 
         ENCODER_TOLERANCE = 10;
+
+        //Reverse this if going forward makes the x coordinate go down
+        xPodDirection = GoBildaPinpointDriver.EncoderDirection.FORWARD;
+        //Reverse this if going left makes the y coordinate go down
+        yPodDirection = GoBildaPinpointDriver.EncoderDirection.FORWARD;
+
 
     }
 
