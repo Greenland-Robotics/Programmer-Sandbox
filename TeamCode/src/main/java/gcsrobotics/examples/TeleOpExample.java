@@ -17,8 +17,14 @@ public class TeleOpExample extends TeleOpBase {
     public void runLoop(){
 
 
-        // Implements all drive logic necessary
-        implementDriveLogic();
+        /* Implements all drive logic necessary
+         * The fieldCentric is toggled by the toggleFieldCentric() method
+         * If you don't want the toggle, change fieldCentric to false like so:
+         * implementDriveLogic(false)
+        */
+        implementDriveLogic(fieldCentric);
+        // This toggles field-centric drive when the right bumper is pressed
+        toggleFieldCentric(gamepad1.right_bumper);
 
         //Example usage of the setMotorPosition() Method
         if(gamepad2.b){

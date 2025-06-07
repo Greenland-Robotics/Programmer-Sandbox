@@ -27,17 +27,19 @@ public class AutoExample extends AutoBase {
         path(100, 100);
         wait(200);
 
-
-        claw.setPosition(clawClose);
+        //Center a servo
+        servo.setPosition(0.5);
         wait(100);
 
-
+        //Example usage of opening the claw according to Constants.clawOpen
+        claw.close();
         arm.setPosition(armDown);
         //Example usage of wait until, it looks different from the other methods,
         //but nothing is different. Just include the () -> and then your boolean value
         waitUntil(() -> arm.getCurrentPosition() == armDown);
 
-
+        //Example usage of opening the claw according to Constants.clawOpen
+        claw.open();
         chain(100,200);
 
         // Move forward for 1 second

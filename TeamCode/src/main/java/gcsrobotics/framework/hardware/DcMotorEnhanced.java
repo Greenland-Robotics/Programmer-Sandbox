@@ -1,10 +1,11 @@
-package gcsrobotics.framework;
+package gcsrobotics.framework.hardware;
 
 import static gcsrobotics.framework.Constants.ENCODER_TOLERANCE;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
+import gcsrobotics.framework.OpModeBase;
 @SuppressWarnings("unused")
 public class DcMotorEnhanced {
     private final DcMotor motor;

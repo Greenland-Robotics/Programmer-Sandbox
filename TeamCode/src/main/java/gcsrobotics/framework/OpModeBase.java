@@ -10,10 +10,15 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 
+import gcsrobotics.framework.hardware.Claw;
+import gcsrobotics.framework.hardware.DcMotorEnhanced;
+import gcsrobotics.framework.hardware.GoBildaPinpointDriver;
+
 
 public abstract class OpModeBase extends LinearOpMode {
     protected DcMotorEnhanced fl,fr,bl,br,arm;
-    protected Servo claw;
+    protected Servo servo;
+    protected Claw claw;
     protected GoBildaPinpointDriver odo;
 
 
@@ -28,7 +33,7 @@ public abstract class OpModeBase extends LinearOpMode {
         br = new DcMotorEnhanced(hardwareMap.get(DcMotor.class,"br"));
         arm = new DcMotorEnhanced(hardwareMap.get(DcMotor.class,"arm"));
 
-        claw = hardwareMap.get(Servo.class,"claw");
+        claw = new Claw(hardwareMap.get(Servo.class,"claw"));
 
         odo = hardwareMap.get(GoBildaPinpointDriver.class,"odo");
         odo.setEncoderResolution(GoBildaPinpointDriver.GoBildaOdometryPods.goBILDA_4_BAR_POD);
@@ -62,4 +67,24 @@ public abstract class OpModeBase extends LinearOpMode {
         run();
 
     }
+
+    /// Resets the odometry position to 0
+    protected void resetPosition(){
+        odo.resetPosAndIMU();
+    }
+
+
+    /// Getter method for the x coordinate
+    /// @return the current x coordinate
+    protected double getX(){
+        return odo.getX();
+    }
+
+    /// Getter method for the y coordinate
+    /// @return the current y coordinate
+    protected double getY(){
+        return odo.getY();
+    }
+
+
 }

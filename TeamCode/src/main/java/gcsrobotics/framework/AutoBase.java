@@ -2,6 +2,7 @@ package gcsrobotics.framework;
 
 import static gcsrobotics.framework.Constants.KdDrive;
 import static gcsrobotics.framework.Constants.KpDrive;
+import static gcsrobotics.framework.Constants.KpTurn;
 import static gcsrobotics.framework.Constants.autoMaxPower;
 
 import androidx.annotation.NonNull;
@@ -11,6 +12,14 @@ import com.qualcomm.robotcore.util.Range;
 
 import java.util.function.Supplier;
 
+import gcsrobotics.framework.hardware.DcMotorEnhanced;
+
+/** The base for all autonomous opmodes. This class extends OpModeBase, so you have access to all
+ * hardware, global variables, and more.
+ * <br>
+ * This provides a centralized and modular approach to autonomous opmodes.<br>
+ * This class has pathing methods,simple drive methods, and lots of utility methods
+ **/
 @SuppressWarnings("all")
 public abstract class AutoBase extends OpModeBase {
 
@@ -39,6 +48,7 @@ public abstract class AutoBase extends OpModeBase {
 
     private final ElapsedTime stuckTimer = new ElapsedTime();
     private double lastDistanceToTarget = Double.MAX_VALUE;
+    private double targetAngle = 0;
 
 
     /// Used for making small, corrective movements when you need simple directional movement
@@ -61,7 +71,8 @@ public abstract class AutoBase extends OpModeBase {
                 stopMotors();
                 break;
             default:
-                throw new IllegalArgumentException("Invalid direction for simpleDrive");
+                throw new IllegalArgumentException("Invalid direction for simpleDrive: NONE" +
+                        "is not a valid direction");
         }
 
 
@@ -170,13 +181,66 @@ public abstract class AutoBase extends OpModeBase {
 
             double xPower = pidDrivePower(xError, true);
             double yPower = pidDrivePower(yError, false);
-            double headingCorrection = Range.clip(0.03 * getAngle(), -0.3, 0.3);
+            double headingCorrection = Range.clip(0.03 * getAngle() - targetAngle, -0.3, 0.3);
 
             setMotorPowers(xPower, yPower, headingCorrection);
             sendTelemetry("CHAIN", xError, yError, xPower, yPower, headingCorrection);
         }
         stopMotors();
     }
+
+    /**
+     * Turns the robot to a specific heading (in degrees).
+     * Positive angles are counterclockwise, negative are clockwise.
+     * Uses a proportional controller for heading.
+     * @param targetAngle the angle to turn to, in degrees (0 = field forward, CCW+)
+     */
+    protected void turn(double targetAngle) {
+        final double tolerance = 1.5; // Degrees within target to finish
+        final long settleTimeMillis = 150; // How long to be within tolerance (ms)
+
+        targetAngle = normalizeAngle(targetAngle);
+
+        ElapsedTime settleTimer = new ElapsedTime();
+        boolean settling = false;
+
+        while (opModeIsActive()) {
+            double currentAngle = getAngle();
+            double error = normalizeAngle(targetAngle - currentAngle);
+
+            // Check if within tolerance to start settling
+            if (Math.abs(error) <= tolerance) {
+                if (!settling) {
+                    settling = true;
+                    settleTimer.reset();
+                }
+                if (settleTimer.milliseconds() >= settleTimeMillis) {
+                    break; // Done turning
+                }
+            } else {
+                settling = false; // Not settled, reset timer next time in tolerance
+            }
+
+            // Proportional control for turn power
+            double power = KpTurn * error;
+
+            // Only heading correction, no X/Y drive
+            setMotorPowers(0, 0, power);
+
+            telemetry.addLine("Turning");
+            telemetry.addData("Target Angle", targetAngle);
+            telemetry.addData("Current Angle", currentAngle);
+            telemetry.addData("Error",error);
+            telemetry.addData("Turn Power", power);
+            telemetry.update();
+        }
+        stopMotors();
+    }
+
+    private double normalizeAngle(double angle){
+        return (angle % 360 + 360) % 360;
+    }
+
 
     ///  Calculates drive power for the pathing methods
     private double pidDrivePower(double error, boolean isX) {
@@ -187,10 +251,16 @@ public abstract class AutoBase extends OpModeBase {
 
     /// Sets the motor powers according to the calculated powers for pathing methods
     private void setMotorPowers(double xPower, double yPower, double headingCorrection) {
-        double flPower = xPower - yPower + headingCorrection;
-        double frPower = xPower + yPower - headingCorrection;
-        double blPower = xPower + yPower + headingCorrection;
-        double brPower = xPower - yPower - headingCorrection;
+        // Compensate for robot heading (field-centric control)
+        double headingRad = Math.toRadians(getAngle());
+        double tempX = xPower * Math.cos(headingRad) - yPower * Math.sin(headingRad);
+        double tempY = xPower * Math.sin(headingRad) + yPower * Math.cos(headingRad);
+
+        // Use rotated values for robot-centric power application
+        double flPower = tempX - tempY + headingCorrection;
+        double frPower = tempX + tempY - headingCorrection;
+        double blPower = tempX + tempY + headingCorrection;
+        double brPower = tempX - tempY - headingCorrection;
 
         // Find the largest magnitude
         double max = Math.max(
@@ -241,17 +311,6 @@ public abstract class AutoBase extends OpModeBase {
         }
 
         return stuckTimer.seconds() < 3.0;
-    }
-
-    /// Getter method for the x coordinate
-    protected double getX() {
-        return odo.getX();
-    }
-
-
-    /// Getter method for the y coordinate
-    protected double getY() {
-        return odo.getY();
     }
 
 

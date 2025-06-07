@@ -2,6 +2,8 @@ package gcsrobotics.framework;
 
 import com.acmerobotics.dashboard.config.Config;
 
+import gcsrobotics.framework.hardware.GoBildaPinpointDriver;
+
 /// <strong>A class that holds all of the robot constants</strong>
 @Config("Robot Constants") //This Config tag allows for these values to be tuned in real time using the dashboard
 public class Constants {
@@ -10,7 +12,6 @@ public class Constants {
     public static double KpDrive;
     public static double KdDrive;
     public static double KpTurn;
-    public static double KdTurn;
     public static int armUp;
     public static int armMiddle;
     public static int armDown;
@@ -36,7 +37,6 @@ public class Constants {
         KpDrive = 0.01;
         KdDrive = 0.001;
         KpTurn = 0.1;
-        KdTurn = 0.01;
 
 
         //More examples here

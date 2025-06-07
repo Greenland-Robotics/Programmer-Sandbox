@@ -1,4 +1,4 @@
-package gcsrobotics.framework;
+package gcsrobotics.framework.hardware;
 
 import static com.qualcomm.robotcore.util.TypeConversion.byteArrayToInt;
 
