@@ -89,7 +89,7 @@ Waits until a given condition is true.
 Central location for tunable constants (motor positions, PID values, setpoints, etc).
 
 ### Key Fields
-  **Example fields that many teams may use, feel free to delete them if they are unnecassary**
+  **Example fields that many teams may use, feel free to delete them if they are unnecessary**
 - `clawClose`, `clawOpen`: Servo positions for the claw.
 - `armUp`, `armMiddle`, `armDown`: Encoder positions for arm levels.
 - `wristUp`, `wristDown`: Servo positions for wrist.
@@ -296,4 +296,5 @@ Override to add code for the `init` phase of teleop.
 - Each class and method is documented with purpose, usage, and scenarios.
 - For detailed code reference, see the .java files.
 - For FTC SDK integration, see [FTC documentation](https://ftc-docs.firstinspires.org/).
+- If nothing else works, **ask Josh**. 
 
