@@ -19,6 +19,7 @@ import gcsrobotics.framework.hardware.DcMotorEnhanced;
  * <br>
  * This provides a centralized and modular approach to autonomous opmodes.<br>
  * This class has pathing methods,simple drive methods, and lots of utility methods
+ * @author Josh Kelley
  **/
 @SuppressWarnings("all")
 public abstract class AutoBase extends OpModeBase {

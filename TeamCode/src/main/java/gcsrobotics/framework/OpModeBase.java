@@ -14,7 +14,8 @@ import gcsrobotics.framework.hardware.Claw;
 import gcsrobotics.framework.hardware.DcMotorEnhanced;
 import gcsrobotics.framework.hardware.GoBildaPinpointDriver;
 
-
+/// The base for all OpModes. Has global variables and methods, and handles hardware initialization.
+/// @author Josh Kelley
 public abstract class OpModeBase extends LinearOpMode {
     protected DcMotorEnhanced fl,fr,bl,br,arm;
     protected Servo servo;
@@ -27,15 +28,25 @@ public abstract class OpModeBase extends LinearOpMode {
 
     private void initHardware(){
         //TODO: Update this config for your robot
-        fl = new DcMotorEnhanced(hardwareMap.get(DcMotor.class,"fl"));
-        fr = new DcMotorEnhanced(hardwareMap.get(DcMotor.class,"fr"));
-        bl = new DcMotorEnhanced(hardwareMap.get(DcMotor.class,"bl"));
-        br = new DcMotorEnhanced(hardwareMap.get(DcMotor.class,"br"));
-        arm = new DcMotorEnhanced(hardwareMap.get(DcMotor.class,"arm"));
+        try {
+            fl = new DcMotorEnhanced(hardwareMap.get(DcMotor.class, "fl"));
+            fr = new DcMotorEnhanced(hardwareMap.get(DcMotor.class, "fr"));
+            bl = new DcMotorEnhanced(hardwareMap.get(DcMotor.class, "bl"));
+            br = new DcMotorEnhanced(hardwareMap.get(DcMotor.class, "br"));
+            arm = new DcMotorEnhanced(hardwareMap.get(DcMotor.class, "arm"));
 
-        claw = new Claw(hardwareMap.get(Servo.class,"claw"));
 
-        odo = hardwareMap.get(GoBildaPinpointDriver.class,"odo");
+            claw = new Claw(hardwareMap.get(Servo.class, "claw"));
+
+            odo = hardwareMap.get(GoBildaPinpointDriver.class, "odo");
+
+        }catch (NullPointerException e){
+            telemetry.addData("Error",e.getMessage());
+            telemetry.addLine("Hardware initialization failed");
+            telemetry.update();
+            stop();
+        }
+
         odo.setEncoderResolution(GoBildaPinpointDriver.GoBildaOdometryPods.goBILDA_4_BAR_POD);
         odo.setEncoderDirections(xPodDirection, yPodDirection);
         odo.resetPosAndIMU();

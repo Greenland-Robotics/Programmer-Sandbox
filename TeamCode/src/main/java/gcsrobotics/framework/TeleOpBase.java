@@ -3,6 +3,7 @@ package gcsrobotics.framework;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import gcsrobotics.framework.hardware.DcMotorEnhanced;
 
+///@author Josh Kelley
 @SuppressWarnings("unused")
 public abstract class TeleOpBase extends OpModeBase {
 
