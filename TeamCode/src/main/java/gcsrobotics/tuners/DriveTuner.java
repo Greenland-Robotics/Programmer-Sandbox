@@ -9,8 +9,10 @@ import gcsrobotics.framework.AutoBase;
  * FTC Dashboard
  * @see ServoTuner
  * @see TurnTuner
+ * @see OdoTuner
  */
 @TeleOp(name="Drive Tuner")
+//@Disabled
 public class DriveTuner extends AutoBase {
 
     protected void runSequence(){

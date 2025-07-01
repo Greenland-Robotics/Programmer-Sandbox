@@ -13,6 +13,7 @@ import gcsrobotics.framework.hardware.Claw;
 /// @see Servo#scaleRange(double min, double max)
 /// @see Claw#setLimits(double min,double max)
 @TeleOp(name="Servo Tuner")
+//@Disabled
 public class ServoTuner extends OpModeBase {//Replace this with the name that you want to tune
 
     private double servoPos = 0.5;

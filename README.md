@@ -194,7 +194,7 @@ Handles communication, configuration, and reading robot pose/velocity.
 - `setPosY(double posY, DistanceUnit unit)`
 - `setHeading(double heading, AngleUnit unit)`
 - `getPosition()`
-- `getHeading()`, `getHeading(AngleUnit)`, `getHeading(UnnormalizedAngleUnit)`
+- `getAngle()`, `getAngle(AngleUnit)`, `getAngle(UnnormalizedAngleUnit)`
 - `getX()`, `getY()`, `getAngle()`
 
 #### Status

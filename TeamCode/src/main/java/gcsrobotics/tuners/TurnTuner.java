@@ -8,8 +8,10 @@ import gcsrobotics.framework.AutoBase;
  * so you can tune the turning constants: Constants.KpTurn live with FTC Dashboard
  * @see ServoTuner
  * @see DriveTuner
+ * @see OdoTuner
  */
 @TeleOp(name="Turn Tuner")
+//@Disabled
 public class TurnTuner extends AutoBase {
 
     protected void runSequence() {

@@ -97,5 +97,9 @@ public abstract class OpModeBase extends LinearOpMode {
         return odo.getY();
     }
 
+    protected double getAngle(){
+        return odo.getAngle();
+    }
+
 
 }

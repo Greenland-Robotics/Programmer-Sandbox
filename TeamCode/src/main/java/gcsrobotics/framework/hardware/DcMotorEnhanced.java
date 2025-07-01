@@ -15,6 +15,11 @@ public class DcMotorEnhanced {
         this.motor = motor;
     }
 
+    public DcMotorEnhanced(DcMotor motor, double DEFAULT_SPEED){
+        this.motor = motor;
+        this.DEFAULT_SPEED = DEFAULT_SPEED;
+    }
+
     public void setPosAndWait(int targetPosition, OpModeBase opmode){
         setPosAndWait(targetPosition,DEFAULT_SPEED,opmode);
     }

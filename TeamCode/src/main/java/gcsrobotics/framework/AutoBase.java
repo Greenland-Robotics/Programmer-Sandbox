@@ -315,11 +315,6 @@ public abstract class AutoBase extends OpModeBase {
     }
 
 
-    ///  Getter method for the heading
-    protected double getAngle() {
-        return odo.getAngle();
-    }
-
     protected void waitUntil(@NonNull Supplier<Boolean> condition) {
         while (!condition.get()) {
             sleep(10);
