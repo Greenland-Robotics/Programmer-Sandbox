@@ -8,7 +8,8 @@ import gcsrobotics.framework.TeleOpBase;
  * This opmode tunes the Odometry system on your robot. Follow the step by step instructions on the
  * telemetry to tune correctly.
  * This is only a basic tuner. For any troubleshooting issues or if you have any questions refer
- * to the <a href="https://www.gobilda.com/content/user_manuals/3110-0002-0001%20User%20Guide.pdf?srsltid=AfmBOoqu3tdALGfSoZl9luumLbiPfkdN_fDECC5KgIIDm8Ch6J7xZ0Us">documentation</a>
+ * to the <a href="https://www.gobilda.com/content/user_manuals/3110-0002-0001%20User%20Guide.pdf?srsltid=AfmBOoqu3tdALGfSoZl9luumLbiPfkdN_fDECC5KgIIDm8Ch6J7xZ0Us">full documentation</a>
+ * or, for an easier alternative, look at PinpointDocumentation.md
  */
 @TeleOp(name="Odo Tuner")
 public class OdoTuner extends TeleOpBase {
