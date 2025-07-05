@@ -44,6 +44,7 @@ public abstract class OpModeBase extends LinearOpMode {
             telemetry.addData("Error",e.getMessage());
             telemetry.addLine("Hardware initialization failed");
             telemetry.update();
+            sleep(5000);
             stop();
         }
 
