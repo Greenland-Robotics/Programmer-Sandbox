@@ -43,7 +43,7 @@ public class AutoExample extends AutoBase /*This means it can access stuff from 
         arm.setPosition(armDown);
         //Example usage of wait until, it looks different from the other methods,
         //but nothing is different. Just include the () -> and then your boolean value
-        waitUntil(() -> arm.getCurrentPosition() == armDown);
+        waitUntil(() -> Math.abs(arm.getCurrentPosition() - armDown) < ENCODER_TOLERANCE);
 
         //Example usage of opening the claw according to Constants.clawOpen
         claw.open();

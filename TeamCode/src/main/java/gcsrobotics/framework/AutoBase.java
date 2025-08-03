@@ -143,7 +143,7 @@ public abstract class AutoBase extends OpModeBase {
 
             double xPower = pidDrivePower(xError, true);
             double yPower = pidDrivePower(yError, false);
-            double headingCorrection = Range.clip(0.03 * getAngle(), -0.3, 0.3);
+            double headingCorrection = Range.clip(0.03 * getAngle() - this.targetAngle, -0.3, 0.3);
 
             setMotorPowers(xPower, yPower, headingCorrection);
             sendTelemetry("PATH", xError, yError, xPower, yPower, headingCorrection);
@@ -182,7 +182,7 @@ public abstract class AutoBase extends OpModeBase {
 
             double xPower = pidDrivePower(xError, true);
             double yPower = pidDrivePower(yError, false);
-            double headingCorrection = Range.clip(0.03 * getAngle() - targetAngle, -0.3, 0.3);
+            double headingCorrection = Range.clip(0.03 * getAngle() - this.targetAngle, -0.3, 0.3);
 
             setMotorPowers(xPower, yPower, headingCorrection);
             sendTelemetry("CHAIN", xError, yError, xPower, yPower, headingCorrection);
@@ -199,6 +199,8 @@ public abstract class AutoBase extends OpModeBase {
     protected void turn(double targetAngle) {
         final double tolerance = 1.5; // Degrees within target to finish
         final long settleTimeMillis = 150; // How long to be within tolerance (ms)
+
+        this.targetAngle = targetAngle;
 
         targetAngle = normalizeAngle(targetAngle);
 
@@ -242,11 +244,35 @@ public abstract class AutoBase extends OpModeBase {
         return (angle % 360 + 360) % 360;
     }
 
+    //Global variables specific to pidDrivePower
+    private double lastXError = 0;
+    private double lastYError = 0;
+    private ElapsedTime pidTimer = new ElapsedTime();
 
-    ///  Calculates drive power for the pathing methods
+    /// Calculates drive power for the pathing methods using PID control
     private double pidDrivePower(double error, boolean isX) {
         double kp = isX ? KpDrive : KpDrive + 0.006;
-        return (kp * error) + (KdDrive * error);
+
+        // Get the time delta for derivative calculation
+        double deltaTime = pidTimer.seconds();
+        pidTimer.reset();
+
+        // Calculate derivative (rate of change of error)
+        double lastError = isX ? lastXError : lastYError;
+        double derivative = deltaTime > 0 ? (error - lastError) / deltaTime : 0;
+
+        // Update last error for next iteration
+        if (isX) {
+            lastXError = error;
+        } else {
+            lastYError = error;
+        }
+
+        // Calculate PID output
+        double proportional = kp * error;
+        double derivativeTerm = KdDrive * derivative;
+
+        return proportional + derivativeTerm;
     }
 
 
@@ -254,29 +280,38 @@ public abstract class AutoBase extends OpModeBase {
     private void setMotorPowers(double xPower, double yPower, double headingCorrection) {
         // Compensate for robot heading (field-centric control)
         double headingRad = Math.toRadians(getAngle());
-        double tempX = xPower * Math.cos(headingRad) - yPower * Math.sin(headingRad);
-        double tempY = xPower * Math.sin(headingRad) + yPower * Math.cos(headingRad);
 
-        // Use rotated values for robot-centric power application
-        double flPower = tempX - tempY + headingCorrection;
-        double frPower = tempX + tempY - headingCorrection;
-        double blPower = tempX + tempY + headingCorrection;
-        double brPower = tempX - tempY - headingCorrection;
+        // Apply field-centric transformation
+        double forwardPower = xPower * Math.cos(headingRad) - yPower * Math.sin(headingRad);
+        double strafePower = xPower * Math.sin(headingRad) + yPower * Math.cos(headingRad);
 
-        // Find the largest magnitude
-        double max = Math.max(
-                autoMaxPower,
-                Math.max(
-                        Math.max(Math.abs(flPower), Math.abs(frPower)),
-                        Math.max(Math.abs(blPower), Math.abs(brPower))
-                )
+        // Calculate mecanum motor powers
+        // Forward = all motors same direction, Strafe = diagonal pattern
+        double flPower = forwardPower + strafePower + headingCorrection;
+        double frPower = forwardPower - strafePower - headingCorrection;
+        double blPower = forwardPower - strafePower + headingCorrection;
+        double brPower = forwardPower + strafePower - headingCorrection;
+
+        // Find the largest motor power magnitude
+        double maxMotorPower = Math.max(
+                Math.max(Math.abs(flPower), Math.abs(frPower)),
+                Math.max(Math.abs(blPower), Math.abs(brPower))
         );
 
-        // Scale all powers if needed
-        fl.setPower(flPower / max);
-        fr.setPower(frPower / max);
-        bl.setPower(blPower / max);
-        br.setPower(brPower / max);
+        // Only scale if any motor power exceeds the limit
+        if (maxMotorPower > autoMaxPower) {
+            double scaleFactor = autoMaxPower / maxMotorPower;
+            fl.setPower(flPower * scaleFactor);
+            fr.setPower(frPower * scaleFactor);
+            bl.setPower(blPower * scaleFactor);
+            br.setPower(brPower * scaleFactor);
+        } else {
+            // No scaling needed, powers are already within limits
+            fl.setPower(flPower);
+            fr.setPower(frPower);
+            bl.setPower(blPower);
+            br.setPower(brPower);
+        }
     }
 
 
