@@ -1,5 +1,23 @@
-# Greenland Robotics Framework: Method Documentation
+# Greenland Robotics Framework: Documentation
 
+## Notes
+- If you are using the PlayStation controllers, use the button map below
+  | PlayStation    | Gamepad(in code) |
+  | -------------- | ---------------- |
+  | X              | A                |
+  | O              | B                |
+  | △              | Y                |
+  | □              | X                |
+- In TeleOp, the following buttons are in use by the `implementDriveLogic()` method(gamepad1 only)
+  - `left_stick_x`
+  - `left_stick_y`
+  - `right_stick_x`
+  - `right_bumper`
+  - `left_trigger`
+  - `right_trigger`<br>
+  by using these in your teleop code, that one action will control both the driving and whatever you mapped it to
+
+# Method Documentation
 This documentation covers **all classes and methods** in `TeamCode/src/main/java/gcsrobotics/framework` for the GreenlandRoboticsFramework.  
 It includes explanations for:  
 - **What each method does**
