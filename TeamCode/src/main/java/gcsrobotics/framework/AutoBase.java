@@ -241,7 +241,7 @@ public abstract class AutoBase extends OpModeBase {
     }
 
     private double normalizeAngle(double angle){
-        return (angle % 360 + 360) % 360;
+        return Math.IEEEremainder(angle, 360.0);
     }
 
     //Global variables specific to pidDrivePower
