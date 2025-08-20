@@ -1,3 +1,6 @@
+# What is this repo?
+This repository is meant to be a space for programmers to work on code and experiment with using the Greenland Robotics Framework without having to worry about breaking or cluttering up their competition repo. I recommend using this repo to play with the basic robots that you have and learn things before the robot is built.
+
 # Greenland Robotics Framework: Documentation
 
 ## Notes
